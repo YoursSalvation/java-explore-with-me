@@ -15,15 +15,13 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     // PUBLIC
     @Query("""
-        SELECT e FROM Event e
-        WHERE e.state = :state
-          AND (:text IS NULL OR
-               lower(e.annotation) LIKE lower(concat('%', :text, '%')) OR
-               lower(e.description) LIKE lower(concat('%', :text, '%')))
-          AND (:categories IS NULL OR e.category.id IN :categories)
-          AND (:paid IS NULL OR e.paid = :paid)
-          AND e.eventDate BETWEEN :start AND :end
-        """)
+            select e from Event e
+            where e.state = :state
+            and (:text is null or lower(e.description) like lower(concat('%', :text, '%')))
+            and (:categories is null or e.category.id in :categories)
+            and (:paid is null or e.paid = :paid)
+            and e.eventDate between :start and :end
+            """)
     Page<Event> findPublicEvents(
             String text,
             List<Long> categories,

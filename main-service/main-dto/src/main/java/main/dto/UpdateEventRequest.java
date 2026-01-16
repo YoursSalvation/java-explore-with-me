@@ -17,13 +17,17 @@ public class UpdateEventRequest {
     private String description;
 
     private Long category;
+
     private String eventDate;
+
     private Location location;
+
     private Boolean paid;
 
     @PositiveOrZero
     private Integer participantLimit;
 
     private Boolean requestModeration;
+
     private String stateAction;
 }

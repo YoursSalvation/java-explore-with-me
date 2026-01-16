@@ -2,6 +2,8 @@ package main.server.controller;
 
 import lombok.RequiredArgsConstructor;
 import main.dto.EventFullDto;
+import main.dto.UpdateEventAdminRequest;
+import main.server.exception.BadRequestException;
 import main.server.service.EventService;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +29,20 @@ public class AdminEventController {
         return eventService.searchEvents(
                 users, states, categories, rangeStart, rangeEnd, from, size
         );
+    }
+
+    @PatchMapping("/{eventId}")
+    public EventFullDto updateEvent(
+            @PathVariable Long eventId,
+            @RequestBody UpdateEventAdminRequest dto
+    ) {
+        if ("PUBLISH_EVENT".equals(dto.getStateAction())) {
+            return eventService.publish(eventId);
+        }
+        if ("REJECT_EVENT".equals(dto.getStateAction())) {
+            return eventService.reject(eventId);
+        }
+        throw new BadRequestException("Unknown state action");
     }
 
     @PatchMapping("/{eventId}/publish")

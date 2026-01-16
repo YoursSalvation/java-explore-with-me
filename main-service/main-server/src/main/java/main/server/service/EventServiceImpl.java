@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import main.dto.*;
 import main.server.client.StatsClient;
+import main.server.exception.BadRequestException;
 import main.server.exception.ConflictException;
 import main.server.exception.NotFoundException;
 import main.server.mapper.EventMapper;
@@ -80,6 +81,10 @@ public class EventServiceImpl implements EventService {
         Event event = eventRepository.findByIdAndInitiatorId(eventId, userId)
                 .orElseThrow(() -> new NotFoundException("Event not found"));
 
+        if (dto.getParticipantLimit() != null && dto.getParticipantLimit() < 0) {
+            throw new BadRequestException("Participant limit must be positive");
+        }
+
         if (event.getState() == EventState.PUBLISHED) {
             throw new ConflictException("Published event cannot be changed");
         }
@@ -147,7 +152,6 @@ public class EventServiceImpl implements EventService {
 
         event.setState(EventState.PUBLISHED);
         event.setPublishedOn(LocalDateTime.now());
-
         return EventMapper.toFullDto(eventRepository.save(event), 0);
     }
 
@@ -155,6 +159,10 @@ public class EventServiceImpl implements EventService {
     public EventFullDto reject(Long eventId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event not found"));
+
+        if (event.getState() == EventState.PUBLISHED) {
+            throw new ConflictException("Cannot reject published event");
+        }
 
         event.setState(EventState.CANCELED);
         return EventMapper.toFullDto(eventRepository.save(event), 0);
