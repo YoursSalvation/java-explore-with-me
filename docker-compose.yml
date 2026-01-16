@@ -38,7 +38,7 @@ services:
       timeout: 5s
       retries: 5
 
-  main-server:
+  ewm-service:
     build:
       context: ./main-service/main-server
     ports:
