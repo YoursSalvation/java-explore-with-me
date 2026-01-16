@@ -26,7 +26,7 @@ public class CompilationServiceImpl implements CompilationService {
     public CompilationDto create(NewCompilationDto dto) {
         Compilation compilation = Compilation.builder()
                 .title(dto.getTitle())
-                .pinned(dto.getPinned())
+                .pinned(dto.getPinned() != null ? dto.getPinned() : false)
                 .build();
 
         return CompilationMapper.toDto(repository.save(compilation));
@@ -43,7 +43,9 @@ public class CompilationServiceImpl implements CompilationService {
                 .orElseThrow(() -> new NotFoundException("Compilation not found"));
 
         compilation.setTitle(dto.getTitle());
-        compilation.setPinned(dto.getPinned());
+        compilation.setPinned(
+                dto.getPinned() != null ? dto.getPinned() : compilation.getPinned()
+        );
 
         return CompilationMapper.toDto(repository.save(compilation));
     }

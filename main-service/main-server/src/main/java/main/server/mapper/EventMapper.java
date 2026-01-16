@@ -27,6 +27,12 @@ public class EventMapper {
                 .requestModeration(dto.getRequestModeration())
                 .createdOn(LocalDateTime.now())
                 .state(EventState.PENDING)
+                .location(
+                        new Location(
+                                dto.getLocation().getLat(),
+                                dto.getLocation().getLon()
+                        )
+                )
                 .build();
     }
 
@@ -71,6 +77,7 @@ public class EventMapper {
                 .paid(event.getPaid())
                 .eventDate(event.getEventDate())
                 .initiator(UserMapper.toShortDto(event.getInitiator()))
+                .location(event.getLocation())
                 .views(views)
                 .build();
     }
@@ -93,6 +100,8 @@ public class EventMapper {
                 .createdOn(event.getCreatedOn())
                 .publishedOn(event.getPublishedOn())
                 .initiator(UserMapper.toShortDto(event.getInitiator()))
+                .location(event.getLocation())
+                .confirmedRequests(0L)
                 .views(views)
                 .build();
     }

@@ -3,6 +3,7 @@ package main.server.model;
 import jakarta.persistence.*;
 import lombok.*;
 import main.dto.EventState;
+import main.dto.Location;
 
 import java.time.LocalDateTime;
 
@@ -56,4 +57,7 @@ public class Event {
     private LocalDateTime createdOn;
 
     private LocalDateTime publishedOn;
+
+    @Embedded
+    private Location location;
 }

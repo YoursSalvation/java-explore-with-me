@@ -40,11 +40,21 @@ public class RequestServiceImpl implements RequestService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event not found"));
 
+        RequestStatus status;
+
+        if (event.getParticipantLimit() == 0) {
+            status = RequestStatus.CONFIRMED;
+        } else if (!event.getRequestModeration()) {
+            status = RequestStatus.CONFIRMED;
+        } else {
+            status = RequestStatus.PENDING;
+        }
+
         Request request = Request.builder()
                 .created(LocalDateTime.now())
                 .event(event)
                 .requester(user)
-                .status(RequestStatus.PENDING)
+                .status(status)
                 .build();
 
         return RequestMapper.toDto(requestRepository.save(request));

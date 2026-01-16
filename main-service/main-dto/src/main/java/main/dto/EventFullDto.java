@@ -22,6 +22,10 @@ public class EventFullDto {
     private LocalDateTime eventDate;
     private LocalDateTime createdOn;
     private LocalDateTime publishedOn;
+
     private UserShortDto initiator;
+
+    private Location location;
+    private Long confirmedRequests;
     private Long views;
 }

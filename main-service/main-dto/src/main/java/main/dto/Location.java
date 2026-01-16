@@ -1,9 +1,9 @@
 package main.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.Embeddable;
+import lombok.*;
 
+@Embeddable
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
