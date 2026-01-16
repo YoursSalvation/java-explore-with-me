@@ -108,11 +108,19 @@ public class EventServiceImpl implements EventService {
             List<Long> users,
             List<String> states,
             List<Long> categories,
-            LocalDateTime rangeStart,
-            LocalDateTime rangeEnd,
+            String rangeStart,
+            String rangeEnd,
             int from,
             int size
     ) {
+        LocalDateTime start = rangeStart == null
+                ? LocalDateTime.of(2000, 1, 1, 0, 0)
+                : LocalDateTime.parse(rangeStart, FORMATTER);
+
+        LocalDateTime end = rangeEnd == null
+                ? LocalDateTime.of(2100, 1, 1, 0, 0)
+                : LocalDateTime.parse(rangeEnd, FORMATTER);
+
         Pageable pageable = PageRequest.of(from / size, size);
 
         List<EventState> eventStates = states == null ? null :
@@ -120,7 +128,7 @@ public class EventServiceImpl implements EventService {
 
         Page<Event> page = eventRepository
                 .findAllByInitiatorIdInAndStateInAndCategoryIdInAndEventDateBetween(
-                        users, eventStates, categories, rangeStart, rangeEnd, pageable
+                        users, eventStates, categories, start, end, pageable
                 );
 
         return page.stream()
@@ -168,11 +176,15 @@ public class EventServiceImpl implements EventService {
             int size,
             HttpServletRequest request
     ) {
-        statsClient.hit(
-                "ewm-main-service",
-                "/events",
-                request.getRemoteAddr()
-        );
+        try {
+            statsClient.hit(
+                    "ewm-main-service",
+                    "/events",
+                    request.getRemoteAddr()
+            );
+        } catch (Exception ignored) {
+
+        }
 
         Pageable pageable = PageRequest.of(from / size, size);
 
@@ -203,7 +215,7 @@ public class EventServiceImpl implements EventService {
         }
 
         List<EventShortDto> result = stream
-                .map(event -> EventMapper.toShortDto(event, getViews(event.getId())))
+                .map(e -> EventMapper.toShortDto(e, getViews(e.getId())))
                 .toList();
 
         if (sort == EventSort.EVENT_DATE) {
@@ -229,11 +241,15 @@ public class EventServiceImpl implements EventService {
                 .filter(e -> e.getState() == EventState.PUBLISHED)
                 .orElseThrow(() -> new NotFoundException("Event not found"));
 
-        statsClient.hit(
-                "ewm-main-service",
-                "/events/" + eventId,
-                request.getRemoteAddr()
-        );
+        try {
+            statsClient.hit(
+                    "ewm-main-service",
+                    "/events/" + eventId,
+                    request.getRemoteAddr()
+            );
+        } catch (Exception ignored) {
+
+        }
 
         long views = getViews(eventId);
 

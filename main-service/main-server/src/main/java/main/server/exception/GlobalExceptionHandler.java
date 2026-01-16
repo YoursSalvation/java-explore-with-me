@@ -2,9 +2,11 @@ package main.server.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -66,6 +68,28 @@ public class GlobalExceptionHandler {
                 ex.getMessage(),
                 "Unexpected error.",
                 HttpStatus.INTERNAL_SERVER_ERROR.name(),
+                LocalDateTime.now()
+        );
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleMissingRequestParam(MissingServletRequestParameterException ex) {
+        return new ApiError(
+                ex.getMessage(),
+                "Incorrectly made request.",
+                HttpStatus.BAD_REQUEST.name(),
+                LocalDateTime.now()
+        );
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        return new ApiError(
+                ex.getMessage(),
+                "Incorrectly made request.",
+                HttpStatus.BAD_REQUEST.name(),
                 LocalDateTime.now()
         );
     }

@@ -3,7 +3,6 @@ package main.server.service;
 import jakarta.servlet.http.HttpServletRequest;
 import main.dto.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EventService {
@@ -26,8 +25,8 @@ public interface EventService {
             List<Long> users,
             List<String> states,
             List<Long> categories,
-            LocalDateTime rangeStart,
-            LocalDateTime rangeEnd,
+            String rangeStart,
+            String rangeEnd,
             int from,
             int size
     );
