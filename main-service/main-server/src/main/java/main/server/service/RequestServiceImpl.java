@@ -1,14 +1,13 @@
 package main.server.service;
 
 import lombok.RequiredArgsConstructor;
-import main.dto.EventState;
 import main.dto.ParticipationRequestDto;
-import main.server.model.RequestStatus;
 import main.server.exception.ConflictException;
 import main.server.exception.NotFoundException;
 import main.server.mapper.RequestMapper;
 import main.server.model.Event;
 import main.server.model.Request;
+import main.server.model.RequestStatus;
 import main.server.model.User;
 import main.server.repository.EventRepository;
 import main.server.repository.RequestRepository;

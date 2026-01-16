@@ -198,7 +198,7 @@ public class EventServiceImpl implements EventService {
 
         if (Boolean.TRUE.equals(onlyAvailable)) {
             stream = stream.filter(e ->
-                            e.getParticipantLimit() == 0
+                    e.getParticipantLimit() == 0
             );
         }
 
