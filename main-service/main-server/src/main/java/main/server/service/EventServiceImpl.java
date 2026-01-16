@@ -89,6 +89,29 @@ public class EventServiceImpl implements EventService {
             throw new ConflictException("Published event cannot be changed");
         }
 
+        if (dto.getStateAction() != null) {
+            switch (dto.getStateAction()) {
+
+                case SEND_TO_REVIEW -> {
+                    if (event.getState() != EventState.CANCELED) {
+                        throw new ConflictException(
+                                "Only canceled event can be sent to review"
+                        );
+                    }
+                    event.setState(EventState.PENDING);
+                }
+
+                case CANCEL_REVIEW -> {
+                    if (event.getState() != EventState.PENDING) {
+                        throw new ConflictException(
+                                "Only pending event can be canceled"
+                        );
+                    }
+                    event.setState(EventState.CANCELED);
+                }
+            }
+        }
+
         if (dto.getTitle() != null) event.setTitle(dto.getTitle());
         if (dto.getAnnotation() != null) event.setAnnotation(dto.getAnnotation());
         if (dto.getDescription() != null) event.setDescription(dto.getDescription());
