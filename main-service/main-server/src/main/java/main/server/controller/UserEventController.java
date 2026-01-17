@@ -1,0 +1,64 @@
+package main.server.controller;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import main.dto.EventFullDto;
+import main.dto.EventShortDto;
+import main.dto.NewEventDto;
+import main.dto.UpdateEventUserRequest;
+import main.server.service.EventService;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/users/{userId}/events")
+@RequiredArgsConstructor
+public class UserEventController {
+
+    private final EventService eventService;
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public EventFullDto create(
+            @PathVariable Long userId,
+            @RequestBody @Valid NewEventDto dto
+    ) {
+        return eventService.create(userId, dto);
+    }
+
+    @PatchMapping("/{eventId}")
+    public EventFullDto update(
+            @PathVariable Long userId,
+            @PathVariable Long eventId,
+            @RequestBody @Valid UpdateEventUserRequest dto
+    ) {
+        return eventService.updateUserEvent(userId, eventId, dto);
+    }
+
+    @GetMapping
+    public List<EventShortDto> getAll(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "0") int from,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return eventService.getUserEvents(userId, from, size);
+    }
+
+    @GetMapping("/{eventId}")
+    public EventFullDto getById(
+            @PathVariable Long userId,
+            @PathVariable Long eventId
+    ) {
+        return eventService.getUserEventById(userId, eventId);
+    }
+
+    @PatchMapping("/{eventId}/cancel")
+    public EventFullDto cancel(
+            @PathVariable Long userId,
+            @PathVariable Long eventId
+    ) {
+        return eventService.cancelUserEvent(userId, eventId);
+    }
+}
