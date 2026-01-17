@@ -112,6 +112,19 @@ public class EventServiceImpl implements EventService {
             }
         }
 
+        if (dto.getEventDate() != null) {
+            LocalDateTime newDate =
+                    LocalDateTime.parse(dto.getEventDate(), FORMATTER);
+
+            if (newDate.isBefore(LocalDateTime.now().plusHours(2))) {
+                throw new BadRequestException(
+                        "Event date must be at least 2 hours in the future"
+                );
+            }
+
+            event.setEventDate(newDate);
+        }
+
         if (dto.getTitle() != null) event.setTitle(dto.getTitle());
         if (dto.getAnnotation() != null) event.setAnnotation(dto.getAnnotation());
         if (dto.getDescription() != null) event.setDescription(dto.getDescription());
@@ -154,10 +167,16 @@ public class EventServiceImpl implements EventService {
         List<EventState> eventStates = states == null ? null :
                 states.stream().map(EventState::valueOf).toList();
 
-        Page<Event> page = eventRepository
-                .findAllByInitiatorIdInAndStateInAndCategoryIdInAndEventDateBetween(
-                        users, eventStates, categories, start, end, pageable
-                );
+        Page<Event> page;
+
+        if (users == null && eventStates == null && categories == null) {
+            page = eventRepository.findAllByEventDateBetween(start, end, pageable);
+        } else {
+            page = eventRepository
+                    .findAllByInitiatorIdInAndStateInAndCategoryIdInAndEventDateBetween(
+                            users, eventStates, categories, start, end, pageable
+                    );
+        }
 
         return page.stream()
                 .map(e -> EventMapper.toFullDto(e, 0))
@@ -288,13 +307,16 @@ public class EventServiceImpl implements EventService {
     }
 
     private long getViews(Long eventId) {
-        List<StatsViewDto> stats = statsClient.getStats(
-                "2000-01-01 00:00:00",
-                "2100-01-01 00:00:00",
-                List.of("/events/" + eventId),
-                true
-        );
-
-        return stats.isEmpty() ? 0 : stats.get(0).getHits();
+        try {
+            List<StatsViewDto> stats = statsClient.getStats(
+                    "2000-01-01 00:00:00",
+                    "2100-01-01 00:00:00",
+                    List.of("/events/" + eventId),
+                    true
+            );
+            return stats.isEmpty() ? 0 : stats.get(0).getHits();
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }

@@ -13,7 +13,6 @@ import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    // PUBLIC
     @Query("""
             select e from Event e
             where e.state = :state
@@ -32,16 +31,20 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             Pageable pageable
     );
 
-    // USER
     Page<Event> findAllByInitiatorId(Long userId, Pageable pageable);
 
     Optional<Event> findByIdAndInitiatorId(Long eventId, Long userId);
 
-    // ADMIN
     Page<Event> findAllByInitiatorIdInAndStateInAndCategoryIdInAndEventDateBetween(
             List<Long> initiatorIds,
             List<EventState> states,
             List<Long> categoryIds,
+            LocalDateTime start,
+            LocalDateTime end,
+            Pageable pageable
+    );
+
+    Page<Event> findAllByEventDateBetween(
             LocalDateTime start,
             LocalDateTime end,
             Pageable pageable
