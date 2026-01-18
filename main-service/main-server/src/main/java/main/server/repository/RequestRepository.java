@@ -1,6 +1,6 @@
 package main.server.repository;
 
-import main.server.model.RequestStatus;
+import main.dto.RequestStatus;
 import main.server.model.Request;
 import org.springframework.data.jpa.repository.JpaRepository;
 

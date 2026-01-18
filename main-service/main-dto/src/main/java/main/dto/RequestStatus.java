@@ -1,4 +1,4 @@
-package main.server.model;
+package main.dto;
 
 public enum RequestStatus {
     PENDING,

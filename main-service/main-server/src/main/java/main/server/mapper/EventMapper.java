@@ -13,9 +13,7 @@ public class EventMapper {
     private static final DateTimeFormatter DATE_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    /* =========================
-       CREATE
-       ========================= */
+    /* CREATE */
     public Event toEntity(NewEventDto dto) {
         return Event.builder()
                 .title(dto.getTitle())
@@ -36,38 +34,7 @@ public class EventMapper {
                 .build();
     }
 
-    /* =========================
-       UPDATE (USER)
-       ========================= */
-    public void updateFromUserRequest(Event event, UpdateEventUserRequest dto) {
-        if (dto.getTitle() != null) {
-            event.setTitle(dto.getTitle());
-        }
-        if (dto.getAnnotation() != null) {
-            event.setAnnotation(dto.getAnnotation());
-        }
-        if (dto.getDescription() != null) {
-            event.setDescription(dto.getDescription());
-        }
-        if (dto.getEventDate() != null) {
-            event.setEventDate(
-                    LocalDateTime.parse(dto.getEventDate(), DATE_TIME_FORMATTER)
-            );
-        }
-        if (dto.getPaid() != null) {
-            event.setPaid(dto.getPaid());
-        }
-        if (dto.getParticipantLimit() != null) {
-            event.setParticipantLimit(dto.getParticipantLimit());
-        }
-        if (dto.getRequestModeration() != null) {
-            event.setRequestModeration(dto.getRequestModeration());
-        }
-    }
-
-    /* =========================
-       SHORT
-       ========================= */
+    /* SHORT */
     public EventShortDto toShortDto(Event event, long views) {
         return EventShortDto.builder()
                 .id(event.getId())
@@ -78,13 +45,12 @@ public class EventMapper {
                 .eventDate(event.getEventDate())
                 .initiator(UserMapper.toShortDto(event.getInitiator()))
                 .location(event.getLocation())
+                .confirmedRequests(event.getConfirmedRequests())
                 .views(views)
                 .build();
     }
 
-    /* =========================
-       FULL
-       ========================= */
+    /* FULL */
     public EventFullDto toFullDto(Event event, long views) {
         return EventFullDto.builder()
                 .id(event.getId())
@@ -101,7 +67,7 @@ public class EventMapper {
                 .publishedOn(event.getPublishedOn())
                 .initiator(UserMapper.toShortDto(event.getInitiator()))
                 .location(event.getLocation())
-                .confirmedRequests(0L)
+                .confirmedRequests(event.getConfirmedRequests())
                 .views(views)
                 .build();
     }

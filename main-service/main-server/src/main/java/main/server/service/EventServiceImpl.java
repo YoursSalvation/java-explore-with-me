@@ -40,8 +40,6 @@ public class EventServiceImpl implements EventService {
     private static final DateTimeFormatter FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    /* ================= USER ================= */
-
     @Override
     public EventFullDto create(Long userId, NewEventDto dto) {
         User user = userRepository.findById(userId)
@@ -141,8 +139,6 @@ public class EventServiceImpl implements EventService {
         return EventMapper.toFullDto(eventRepository.save(event), 0);
     }
 
-    /* ================= ADMIN ================= */
-
     @Override
     @Transactional(readOnly = true)
     public List<EventFullDto> searchEvents(
@@ -210,8 +206,6 @@ public class EventServiceImpl implements EventService {
         return EventMapper.toFullDto(eventRepository.save(event), 0);
     }
 
-    /* ================= PUBLIC ================= */
-
     @Override
     @Transactional(readOnly = true)
     public List<EventShortDto> getPublicEvents(
@@ -260,7 +254,8 @@ public class EventServiceImpl implements EventService {
 
         if (Boolean.TRUE.equals(onlyAvailable)) {
             stream = stream.filter(e ->
-                    e.getParticipantLimit() == 0
+                    e.getParticipantLimit() == 0 ||
+                            e.getConfirmedRequests() < e.getParticipantLimit()
             );
         }
 

@@ -2,6 +2,7 @@ package main.server.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import main.dto.RequestStatus;
 
 import java.time.LocalDateTime;
 

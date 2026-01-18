@@ -44,6 +44,10 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             Pageable pageable
     );
 
+    @Query("""
+                select e from Event e
+                where e.eventDate between :start and :end
+            """)
     Page<Event> findAllByEventDateBetween(
             LocalDateTime start,
             LocalDateTime end,

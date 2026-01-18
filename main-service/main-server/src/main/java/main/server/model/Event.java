@@ -60,4 +60,7 @@ public class Event {
 
     @Embedded
     private Location location;
+
+    @Column(nullable = false)
+    private Long confirmedRequests = 0L;
 }

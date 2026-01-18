@@ -2,11 +2,9 @@ package main.server.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import main.dto.EventFullDto;
-import main.dto.EventShortDto;
-import main.dto.NewEventDto;
-import main.dto.UpdateEventUserRequest;
+import main.dto.*;
 import main.server.service.EventService;
+import main.server.service.RequestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +16,7 @@ import java.util.List;
 public class UserEventController {
 
     private final EventService eventService;
+    private final RequestService requestService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -60,5 +59,14 @@ public class UserEventController {
             @PathVariable Long eventId
     ) {
         return eventService.cancelUserEvent(userId, eventId);
+    }
+
+    @PatchMapping("/{eventId}/requests")
+    public List<ParticipationRequestDto> updateStatus(
+            @PathVariable Long userId,
+            @PathVariable Long eventId,
+            @RequestBody EventRequestStatusUpdateRequest dto
+    ) {
+        return requestService.updateRequestsStatus(userId, eventId, dto);
     }
 }

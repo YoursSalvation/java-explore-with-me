@@ -1,13 +1,15 @@
 package main.server.service;
 
 import lombok.RequiredArgsConstructor;
+import main.dto.EventRequestStatusUpdateRequest;
+import main.dto.EventState;
 import main.dto.ParticipationRequestDto;
 import main.server.exception.ConflictException;
 import main.server.exception.NotFoundException;
 import main.server.mapper.RequestMapper;
 import main.server.model.Event;
 import main.server.model.Request;
-import main.server.model.RequestStatus;
+import main.dto.RequestStatus;
 import main.server.model.User;
 import main.server.repository.EventRepository;
 import main.server.repository.RequestRepository;
@@ -40,15 +42,27 @@ public class RequestServiceImpl implements RequestService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event not found"));
 
-        RequestStatus status;
-
-        if (event.getParticipantLimit() == 0) {
-            status = RequestStatus.CONFIRMED;
-        } else if (!event.getRequestModeration()) {
-            status = RequestStatus.CONFIRMED;
-        } else {
-            status = RequestStatus.PENDING;
+        if (event.getInitiator().getId().equals(userId)) {
+            throw new ConflictException("Initiator cannot request participation in own event");
         }
+
+        if (event.getState() != EventState.PUBLISHED) {
+            throw new ConflictException("Event must be published");
+        }
+
+        if (event.getParticipantLimit() > 0) {
+            long confirmed = requestRepository
+                    .countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
+
+            if (confirmed >= event.getParticipantLimit()) {
+                throw new ConflictException("Participant limit reached");
+            }
+        }
+
+        RequestStatus status =
+                (!event.getRequestModeration() || event.getParticipantLimit() == 0)
+                        ? RequestStatus.CONFIRMED
+                        : RequestStatus.PENDING;
 
         Request request = Request.builder()
                 .created(LocalDateTime.now())
@@ -57,7 +71,66 @@ public class RequestServiceImpl implements RequestService {
                 .status(status)
                 .build();
 
-        return RequestMapper.toDto(requestRepository.save(request));
+        Request saved = requestRepository.save(request);
+
+        if (status == RequestStatus.CONFIRMED) {
+            event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+        }
+
+        return RequestMapper.toDto(saved);
+    }
+
+    @Override
+    public List<ParticipationRequestDto> updateRequestsStatus(
+            Long userId,
+            Long eventId,
+            EventRequestStatusUpdateRequest dto
+    ) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Event not found"));
+
+        if (!event.getInitiator().getId().equals(userId)) {
+            throw new ConflictException("Only initiator can change request status");
+        }
+
+        List<Request> requests = requestRepository.findAllById(dto.getRequestIds());
+
+        if (requests.isEmpty()) {
+            throw new NotFoundException("Requests not found");
+        }
+
+        if (dto.getStatus() == RequestStatus.CONFIRMED) {
+
+            long confirmed = requestRepository
+                    .countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
+
+            if (event.getParticipantLimit() > 0 &&
+                    confirmed + requests.size() > event.getParticipantLimit()) {
+                throw new ConflictException("Participant limit reached");
+            }
+
+            for (Request r : requests) {
+                if (r.getStatus() != RequestStatus.PENDING) {
+                    throw new ConflictException("Only pending requests can be confirmed");
+                }
+                r.setStatus(RequestStatus.CONFIRMED);
+            }
+
+            event.setConfirmedRequests(
+                    event.getConfirmedRequests() + requests.size()
+            );
+
+        } else if (dto.getStatus() == RequestStatus.REJECTED) {
+            for (Request r : requests) {
+                r.setStatus(RequestStatus.REJECTED);
+            }
+        }
+
+        requestRepository.saveAll(requests);
+
+        return requests.stream()
+                .map(RequestMapper::toDto)
+                .toList();
     }
 
     @Override
