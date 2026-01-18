@@ -31,7 +31,7 @@ public class UserEventController {
     public EventFullDto update(
             @PathVariable Long userId,
             @PathVariable Long eventId,
-            @RequestBody @Valid UpdateEventUserRequest dto
+            @RequestBody(required = false) @Valid UpdateEventUserRequest dto
     ) {
         return eventService.updateUserEvent(userId, eventId, dto);
     }

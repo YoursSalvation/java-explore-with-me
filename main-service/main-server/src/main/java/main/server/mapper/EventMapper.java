@@ -25,6 +25,7 @@ public class EventMapper {
                 .requestModeration(dto.getRequestModeration())
                 .createdOn(LocalDateTime.now())
                 .state(EventState.PENDING)
+                .confirmedRequests(0L)
                 .location(
                         new Location(
                                 dto.getLocation().getLat(),

@@ -23,11 +23,11 @@ public class Event {
     @Column(nullable = false, length = 120)
     private String title;
 
-    @Column(nullable = false, length = 2000)
-    private String annotation;
-
-    @Column(nullable = false, length = 7000)
+    @Column(columnDefinition = "TEXT")
     private String description;
+
+    @Column(columnDefinition = "TEXT")
+    private String annotation;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
@@ -61,6 +61,6 @@ public class Event {
     @Embedded
     private Location location;
 
-    @Column(nullable = false)
+    @Column(name = "confirmed_requests", nullable = false)
     private Long confirmedRequests = 0L;
 }
