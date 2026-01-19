@@ -221,6 +221,15 @@ public class EventServiceImpl implements EventService {
             HttpServletRequest request
     ) {
 
+        try {
+            statsClient.hit(
+                    "ewm-main-service",
+                    request.getRequestURI(),
+                    getClientIp(request)
+            );
+        } catch (Exception ignored) {
+        }
+
         Pageable pageable = PageRequest.of(from / size, size);
 
         LocalDateTime start = rangeStart == null
@@ -287,7 +296,7 @@ public class EventServiceImpl implements EventService {
             statsClient.hit(
                     "ewm-main-service",
                     request.getRequestURI(),
-                    request.getRemoteAddr()
+                    getClientIp(request)
             );
         } catch (Exception ignored) {
         }
@@ -324,5 +333,13 @@ public class EventServiceImpl implements EventService {
         } catch (Exception e) {
             return 0;
         }
+    }
+
+    private String getClientIp(HttpServletRequest request) {
+        String forwardedFor = request.getHeader("X-Forwarded-For");
+        if (forwardedFor != null && !forwardedFor.isBlank()) {
+            return forwardedFor.split(",")[0];
+        }
+        return request.getRemoteAddr();
     }
 }
