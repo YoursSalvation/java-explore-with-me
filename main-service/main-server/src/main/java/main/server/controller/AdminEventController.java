@@ -1,5 +1,6 @@
 package main.server.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import main.dto.EventFullDto;
 import main.dto.UpdateEventAdminRequest;
@@ -33,7 +34,7 @@ public class AdminEventController {
     @PatchMapping("/{eventId}")
     public EventFullDto updateEvent(
             @PathVariable Long eventId,
-            @RequestBody UpdateEventAdminRequest dto
+            @RequestBody @Valid UpdateEventAdminRequest dto
     ) {
         if ("PUBLISH_EVENT".equals(dto.getStateAction())) {
             return eventService.publish(eventId);
