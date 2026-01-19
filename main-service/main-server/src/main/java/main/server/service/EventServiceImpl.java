@@ -298,7 +298,8 @@ public class EventServiceImpl implements EventService {
                     request.getRequestURI(),
                     getClientIp(request)
             );
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
 
         long views = getViews(eventId);
 
