@@ -230,15 +230,6 @@ public class EventServiceImpl implements EventService {
             HttpServletRequest request
     ) {
 
-        try {
-            statsClient.hit(
-                    "ewm-main-service",
-                    request.getRequestURI(),
-                    getClientIp(request)
-            );
-        } catch (Exception ignored) {
-        }
-
         Pageable pageable = PageRequest.of(from / size, size);
 
         LocalDateTime start = rangeStart == null
@@ -294,21 +285,18 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public EventFullDto getPublicEventById(Long eventId, HttpServletRequest request) {
 
         Event event = eventRepository.findById(eventId)
                 .filter(e -> e.getState() == EventState.PUBLISHED)
                 .orElseThrow(() -> new NotFoundException("Event not found"));
 
-        try {
-            statsClient.hit(
-                    "ewm-main-service",
-                    request.getRequestURI(),
-                    getClientIp(request)
-            );
-        } catch (Exception ignored) {
-        }
+        statsClient.hit(
+                "ewm-main-service",
+                "/events/" + eventId,
+                getClientIp(request)
+        );
 
         long views = getViews(eventId);
 
@@ -316,20 +304,16 @@ public class EventServiceImpl implements EventService {
     }
 
     private long getViews(Long eventId) {
-        try {
-            String uri = "/events/" + eventId;
+        String uri = "/events/" + eventId;
 
-            List<StatsViewDto> stats = statsClient.getStats(
-                    "2000-01-01 00:00:00",
-                    "2100-01-01 00:00:00",
-                    List.of(uri),
-                    true
-            );
+        List<StatsViewDto> stats = statsClient.getStats(
+                "2000-01-01 00:00:00",
+                "2100-01-01 00:00:00",
+                List.of(uri),
+                true
+        );
 
-            return stats.isEmpty() ? 0 : stats.get(0).getHits();
-        } catch (Exception e) {
-            return 0;
-        }
+        return stats.isEmpty() ? 0 : stats.get(0).getHits();
     }
 
     private String getClientIp(HttpServletRequest request) {
