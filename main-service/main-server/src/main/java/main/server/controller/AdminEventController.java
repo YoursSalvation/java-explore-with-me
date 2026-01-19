@@ -3,7 +3,6 @@ package main.server.controller;
 import lombok.RequiredArgsConstructor;
 import main.dto.EventFullDto;
 import main.dto.UpdateEventAdminRequest;
-import main.server.exception.BadRequestException;
 import main.server.service.EventService;
 import org.springframework.web.bind.annotation.*;
 
