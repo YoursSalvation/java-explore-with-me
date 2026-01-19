@@ -1,6 +1,5 @@
 package stats.client;
 
-import stats.dto.StatsHitDto;
 import stats.dto.StatsViewDto;
 
 import java.time.LocalDateTime;
@@ -8,7 +7,7 @@ import java.util.List;
 
 public interface StatsClient {
 
-    void hit(StatsHitDto hitDto);
+    void hit(String app, String uri, String ip);
 
     List<StatsViewDto> getStats(
             LocalDateTime start,
