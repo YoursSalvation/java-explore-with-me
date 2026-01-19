@@ -7,9 +7,13 @@ spring:
     username: ewm
     password: ewm
 
+  sql:
+    init:
+      mode: always
+
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     show-sql: true
     properties:
       hibernate:

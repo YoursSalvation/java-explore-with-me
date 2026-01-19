@@ -220,15 +220,6 @@ public class EventServiceImpl implements EventService {
             int size,
             HttpServletRequest request
     ) {
-        try {
-            statsClient.hit(
-                    "ewm-main-service",
-                    "/events",
-                    request.getRemoteAddr()
-            );
-        } catch (Exception ignored) {
-
-        }
 
         Pageable pageable = PageRequest.of(from / size, size);
 
@@ -295,29 +286,35 @@ public class EventServiceImpl implements EventService {
         try {
             statsClient.hit(
                     "ewm-main-service",
-                    "/events/" + eventId,
+                    request.getRequestURI(),
                     request.getRemoteAddr()
             );
         } catch (Exception ignored) {
 
         }
 
-        long views = getViews(eventId);
+        List<StatsViewDto> stats = statsClient.getStats(
+                "2000-01-01 00:00:00",
+                "2100-01-01 00:00:00",
+                List.of(request.getRequestURI()),
+                true
+        );
+
+        long views = stats.isEmpty() ? 0 : stats.get(0).getHits();
 
         return EventMapper.toFullDto(event, views);
     }
 
     private long getViews(Long eventId) {
-        try {
-            List<StatsViewDto> stats = statsClient.getStats(
-                    "2000-01-01 00:00:00",
-                    "2100-01-01 00:00:00",
-                    List.of("/events/" + eventId),
-                    true
-            );
-            return stats.isEmpty() ? 0 : stats.get(0).getHits();
-        } catch (Exception e) {
-            return 0;
-        }
+        String uri = "/events/" + eventId;
+
+        List<StatsViewDto> stats = statsClient.getStats(
+                "2000-01-01 00:00:00",
+                "2100-01-01 00:00:00",
+                List.of(uri),
+                true
+        );
+
+        return stats.isEmpty() ? 0 : stats.get(0).getHits();
     }
 }
