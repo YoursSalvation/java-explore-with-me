@@ -3,6 +3,7 @@ package main.server.service;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import main.dto.*;
+import main.server.client.StatsClient;
 import main.server.exception.BadRequestException;
 import main.server.exception.ConflictException;
 import main.server.exception.NotFoundException;
@@ -18,7 +19,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import stats.client.StatsClient;
 import stats.dto.StatsViewDto;
 
 import java.time.LocalDateTime;
@@ -307,8 +307,8 @@ public class EventServiceImpl implements EventService {
         String uri = "/events/" + eventId;
 
         List<StatsViewDto> stats = statsClient.getStats(
-                LocalDateTime.of(2000, 1, 1, 0, 0),
-                LocalDateTime.of(2100, 1, 1, 0, 0),
+                "2000-01-01 00:00:00",
+                "2100-01-01 00:00:00",
                 List.of(uri),
                 true
         );
