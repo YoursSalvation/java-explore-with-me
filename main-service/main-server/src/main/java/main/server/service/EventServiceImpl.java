@@ -240,6 +240,12 @@ public class EventServiceImpl implements EventService {
                 ? LocalDateTime.of(2100, 1, 1, 0, 0)
                 : LocalDateTime.parse(rangeEnd, FORMATTER);
 
+        if (start.isAfter(end)) {
+            throw new BadRequestException(
+                    "rangeStart must be before rangeEnd"
+            );
+        }
+
         Page<Event> page = eventRepository.findPublicEvents(
                 text,
                 categories,
