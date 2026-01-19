@@ -302,8 +302,12 @@ public class EventServiceImpl implements EventService {
             );
         }
 
+        String safeText = (text == null || text.isBlank())
+                ? null
+                : text;
+
         Page<Event> page = eventRepository.findPublicEvents(
-                text,
+                safeText,
                 categories,
                 paid,
                 start,
