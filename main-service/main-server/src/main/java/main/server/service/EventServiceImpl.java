@@ -301,10 +301,9 @@ public class EventServiceImpl implements EventService {
         } catch (Exception ignored) {
         }
 
-        event.setViews(event.getViews() + 1);
-        eventRepository.save(event);
+        long views = getViews(eventId);
 
-        return EventMapper.toFullDto(event, event.getViews());
+        return EventMapper.toFullDto(event, views);
     }
 
     private long getViews(Long eventId) {

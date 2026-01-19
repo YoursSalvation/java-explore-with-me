@@ -26,7 +26,6 @@ public class EventMapper {
                 .createdOn(LocalDateTime.now())
                 .state(EventState.PENDING)
                 .confirmedRequests(0L)
-                .views(0L)
                 .location(
                         new Location(
                                 dto.getLocation().getLat(),

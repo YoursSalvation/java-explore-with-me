@@ -39,7 +39,6 @@ CREATE TABLE events (
     lon DOUBLE PRECISION,
 
     confirmed_requests BIGINT NOT NULL DEFAULT 0,
-    views BIGINT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE requests (
