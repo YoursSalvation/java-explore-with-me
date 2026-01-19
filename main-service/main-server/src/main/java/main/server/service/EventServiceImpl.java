@@ -306,15 +306,19 @@ public class EventServiceImpl implements EventService {
     }
 
     private long getViews(Long eventId) {
-        String uri = "/events/" + eventId;
+        try {
+            String uri = "/events/" + eventId;
 
-        List<StatsViewDto> stats = statsClient.getStats(
-                "2000-01-01 00:00:00",
-                "2100-01-01 00:00:00",
-                List.of(uri),
-                true
-        );
+            List<StatsViewDto> stats = statsClient.getStats(
+                    "2000-01-01 00:00:00",
+                    "2100-01-01 00:00:00",
+                    List.of(uri),
+                    true
+            );
 
-        return stats.isEmpty() ? 0 : stats.get(0).getHits();
+            return stats.isEmpty() ? 0 : stats.get(0).getHits();
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }
