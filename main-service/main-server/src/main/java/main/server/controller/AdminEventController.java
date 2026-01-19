@@ -42,7 +42,7 @@ public class AdminEventController {
         if ("REJECT_EVENT".equals(dto.getStateAction())) {
             return eventService.reject(eventId);
         }
-        throw new BadRequestException("Unknown state action");
+        return eventService.updateAdminEvent(eventId, dto);
     }
 
     @PatchMapping("/{eventId}/publish")

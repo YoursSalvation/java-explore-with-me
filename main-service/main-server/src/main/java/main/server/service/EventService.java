@@ -35,6 +35,8 @@ public interface EventService {
 
     EventFullDto reject(Long eventId);
 
+    EventFullDto updateAdminEvent(Long eventId, UpdateEventAdminRequest dto);
+
     /* ================= PUBLIC ================= */
 
     List<EventShortDto> getPublicEvents(

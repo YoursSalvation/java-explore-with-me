@@ -140,6 +140,62 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    public EventFullDto updateAdminEvent(Long eventId, UpdateEventAdminRequest dto) {
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Event not found"));
+
+        if (dto.getEventDate() != null) {
+            LocalDateTime newDate =
+                    LocalDateTime.parse(dto.getEventDate(), FORMATTER);
+
+            if (newDate.isBefore(LocalDateTime.now().plusHours(1))) {
+                throw new BadRequestException(
+                        "Event date must be at least 1 hour in the future"
+                );
+            }
+
+            event.setEventDate(newDate);
+        }
+
+        if (dto.getCategory() != null) {
+            Category category = categoryRepository.findById(dto.getCategory())
+                    .orElseThrow(() -> new NotFoundException("Category not found"));
+            event.setCategory(category);
+        }
+
+        if (dto.getTitle() != null) {
+            event.setTitle(dto.getTitle());
+        }
+
+        if (dto.getAnnotation() != null) {
+            event.setAnnotation(dto.getAnnotation());
+        }
+
+        if (dto.getDescription() != null) {
+            event.setDescription(dto.getDescription());
+        }
+
+        if (dto.getPaid() != null) {
+            event.setPaid(dto.getPaid());
+        }
+
+        if (dto.getParticipantLimit() != null) {
+            if (dto.getParticipantLimit() < 0) {
+                throw new BadRequestException("Participant limit must be positive");
+            }
+            event.setParticipantLimit(dto.getParticipantLimit());
+        }
+
+        if (dto.getRequestModeration() != null) {
+            event.setRequestModeration(dto.getRequestModeration());
+        }
+
+        Event saved = eventRepository.save(event);
+        return EventMapper.toFullDto(saved, getViews(saved.getId()));
+    }
+
+    @Override
     public EventFullDto cancelUserEvent(Long userId, Long eventId) {
         Event event = eventRepository.findByIdAndInitiatorId(eventId, userId)
                 .orElseThrow(() -> new NotFoundException("Event not found"));
