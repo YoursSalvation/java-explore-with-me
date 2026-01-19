@@ -48,6 +48,15 @@ public class EventServiceImpl implements EventService {
         Category category = categoryRepository.findById(dto.getCategory())
                 .orElseThrow(() -> new NotFoundException("Category not found"));
 
+        LocalDateTime eventDate =
+                LocalDateTime.parse(dto.getEventDate(), FORMATTER);
+
+        if (eventDate.isBefore(LocalDateTime.now().plusHours(2))) {
+            throw new BadRequestException(
+                    "Event date must be at least 2 hours in the future"
+            );
+        }
+
         Event event = EventMapper.toEntity(dto);
         event.setInitiator(user);
         event.setCategory(category);
