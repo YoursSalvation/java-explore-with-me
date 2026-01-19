@@ -26,4 +26,4 @@ management:
         include: health
 
 stats-server:
-  url: http://localhost:9090
+  url: http://stats-server:9090
