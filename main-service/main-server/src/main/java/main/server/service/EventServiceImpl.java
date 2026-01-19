@@ -290,17 +290,21 @@ public class EventServiceImpl implements EventService {
                     request.getRemoteAddr()
             );
         } catch (Exception ignored) {
-
         }
 
-        List<StatsViewDto> stats = statsClient.getStats(
-                "2000-01-01 00:00:00",
-                "2100-01-01 00:00:00",
-                List.of(request.getRequestURI()),
-                true
-        );
+        long views = 0;
 
-        long views = stats.isEmpty() ? 0 : stats.get(0).getHits();
+        try {
+            List<StatsViewDto> stats = statsClient.getStats(
+                    "2000-01-01 00:00:00",
+                    "2100-01-01 00:00:00",
+                    List.of(request.getRequestURI()),
+                    true
+            );
+            views = stats.isEmpty() ? 0 : stats.get(0).getHits();
+        } catch (Exception ignored) {
+            views = 0;
+        }
 
         return EventMapper.toFullDto(event, views);
     }

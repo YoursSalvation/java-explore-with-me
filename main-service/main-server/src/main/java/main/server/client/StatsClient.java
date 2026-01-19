@@ -41,14 +41,14 @@ public class StatsClient {
             boolean unique
     ) {
         String url = statsServerUrl +
-                "/stats?start={start}&end={end}&uris={uri}&unique={unique}";
+                "/stats?start={start}&end={end}&uris={uris}&unique={unique}";
 
         StatsViewDto[] response = restTemplate.getForObject(
                 url,
                 StatsViewDto[].class,
                 start,
                 end,
-                uris.get(0),
+                String.join(",", uris),
                 unique
         );
 
