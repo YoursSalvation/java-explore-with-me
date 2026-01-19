@@ -207,7 +207,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<EventShortDto> getPublicEvents(
             String text,
             List<Long> categories,
@@ -285,7 +285,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public EventFullDto getPublicEventById(Long eventId, HttpServletRequest request) {
 
         Event event = eventRepository.findById(eventId)
@@ -301,9 +301,10 @@ public class EventServiceImpl implements EventService {
         } catch (Exception ignored) {
         }
 
-        long views = getViews(eventId);
+        event.setViews(event.getViews() + 1);
+        eventRepository.save(event);
 
-        return EventMapper.toFullDto(event, views);
+        return EventMapper.toFullDto(event, event.getViews());
     }
 
     private long getViews(Long eventId) {
