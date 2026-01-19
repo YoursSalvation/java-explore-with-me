@@ -298,22 +298,9 @@ public class EventServiceImpl implements EventService {
                     request.getRequestURI(),
                     getClientIp(request)
             );
-        } catch (Exception ignored) {
-        }
+        } catch (Exception ignored) {}
 
-        long views = 0;
-
-        try {
-            List<StatsViewDto> stats = statsClient.getStats(
-                    "2000-01-01 00:00:00",
-                    "2100-01-01 00:00:00",
-                    List.of(request.getRequestURI()),
-                    true
-            );
-            views = stats.isEmpty() ? 0 : stats.get(0).getHits();
-        } catch (Exception ignored) {
-            views = 0;
-        }
+        long views = getViews(eventId);
 
         return EventMapper.toFullDto(event, views);
     }
