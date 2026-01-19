@@ -1,3 +1,6 @@
+server:
+  port: 8080
+
 spring:
   datasource:
     url: jdbc:postgresql://main-db:5432/ewm
@@ -12,9 +15,6 @@ spring:
     hibernate:
       ddl-auto: none
     show-sql: true
-
-server:
-  port: 8080
 
 stats-server:
   url: http://stats-server:9090
