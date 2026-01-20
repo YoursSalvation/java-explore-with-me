@@ -286,6 +286,10 @@ public class EventServiceImpl implements EventService {
             HttpServletRequest request
     ) {
 
+        if (text != null && text.isBlank()) {
+            text = null;
+        }
+
         Pageable pageable = PageRequest.of(from / size, size);
 
         LocalDateTime start = rangeStart == null
@@ -302,12 +306,8 @@ public class EventServiceImpl implements EventService {
             );
         }
 
-        String safeText = (text == null || text.isBlank())
-                ? null
-                : text;
-
         Page<Event> page = eventRepository.findPublicEvents(
-                safeText,
+                text,
                 categories,
                 paid,
                 start,
