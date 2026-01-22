@@ -25,8 +25,16 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto create(NewCategoryDto dto) {
-        Category category = repository.save(CategoryMapper.toEntity(dto));
-        return CategoryMapper.toDto(category);
+        try {
+            Category category = repository.saveAndFlush(
+                    CategoryMapper.toEntity(dto)
+            );
+            return CategoryMapper.toDto(category);
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictException(
+                    "Category with name=" + dto.getName() + " already exists"
+            );
+        }
     }
 
     @Override
