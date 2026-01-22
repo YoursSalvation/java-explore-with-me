@@ -3,10 +3,12 @@ package main.server.service;
 import lombok.RequiredArgsConstructor;
 import main.dto.CategoryDto;
 import main.dto.NewCategoryDto;
+import main.server.exception.ConflictException;
 import main.server.exception.NotFoundException;
 import main.server.mapper.CategoryMapper;
 import main.server.model.Category;
 import main.server.repository.CategoryRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -32,8 +34,14 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = repository.findById(catId)
                 .orElseThrow(() -> new NotFoundException("Category not found"));
 
-        category.setName(dto.getName());
-        return CategoryMapper.toDto(repository.save(category));
+        try {
+            category.setName(dto.getName());
+            return CategoryMapper.toDto(repository.save(category));
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictException(
+                    "Category with name=" + dto.getName() + " already exists"
+            );
+        }
     }
 
     @Override
