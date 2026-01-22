@@ -81,6 +81,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    @Transactional
     public List<ParticipationRequestDto> updateRequestsStatus(
             Long userId,
             Long eventId,
@@ -99,6 +100,14 @@ public class RequestServiceImpl implements RequestService {
             throw new NotFoundException("Requests not found");
         }
 
+        for (Request r : requests) {
+            if (r.getStatus() == RequestStatus.CONFIRMED) {
+                throw new ConflictException(
+                        "Cannot change status of confirmed request"
+                );
+            }
+        }
+
         if (dto.getStatus() == RequestStatus.CONFIRMED) {
 
             long confirmed = requestRepository
@@ -110,9 +119,7 @@ public class RequestServiceImpl implements RequestService {
             }
 
             for (Request r : requests) {
-                if (r.getStatus() != RequestStatus.PENDING) {
-                    throw new ConflictException("Only pending requests can be confirmed");
-                }
+                // здесь уже можно не проверять, мы проверили выше
                 r.setStatus(RequestStatus.CONFIRMED);
             }
 
@@ -121,6 +128,7 @@ public class RequestServiceImpl implements RequestService {
             );
 
         } else if (dto.getStatus() == RequestStatus.REJECTED) {
+
             for (Request r : requests) {
                 r.setStatus(RequestStatus.REJECTED);
             }
