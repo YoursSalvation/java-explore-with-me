@@ -36,7 +36,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         try {
             category.setName(dto.getName());
-            return CategoryMapper.toDto(repository.save(category));
+            return CategoryMapper.toDto(repository.saveAndFlush(category));
         } catch (DataIntegrityViolationException e) {
             throw new ConflictException(
                     "Category with name=" + dto.getName() + " already exists"
