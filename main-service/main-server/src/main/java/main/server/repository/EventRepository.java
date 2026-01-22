@@ -17,7 +17,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query("""
                 select e from Event e
                 where e.state = :state
-                and (:text is null or e.description like concat('%', :text, '%'))
+                and (:text is null or e.description like :text)
                 and (:categories is null or e.category.id in :categories)
                 and (:paid is null or e.paid = :paid)
                 and e.eventDate between :start and :end

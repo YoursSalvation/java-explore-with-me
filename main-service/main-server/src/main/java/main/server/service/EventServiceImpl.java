@@ -286,7 +286,9 @@ public class EventServiceImpl implements EventService {
             HttpServletRequest request
     ) {
 
-        if (text != null && text.isBlank()) {
+        if (text != null && !text.isBlank()) {
+            text = "%" + text + "%";
+        } else {
             text = null;
         }
 
