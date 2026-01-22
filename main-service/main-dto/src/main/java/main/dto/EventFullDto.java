@@ -1,5 +1,6 @@
 package main.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -19,12 +20,13 @@ public class EventFullDto {
     private Integer participantLimit;
     private Boolean requestModeration;
     private EventState state;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdOn;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime publishedOn;
-
     private UserShortDto initiator;
-
     private Location location;
     private Long confirmedRequests;
     private Long views;
