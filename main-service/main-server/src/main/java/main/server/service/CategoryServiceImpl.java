@@ -54,7 +54,14 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void delete(Long catId) {
-        repository.deleteById(catId);
+        try {
+            repository.deleteById(catId);
+            repository.flush();
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictException(
+                    "Category with id=" + catId + " has related events"
+            );
+        }
     }
 
     @Override
