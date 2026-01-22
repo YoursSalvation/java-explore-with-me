@@ -5,7 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -17,5 +18,5 @@ public class NewCompilationDto {
 
     private Boolean pinned = false;
 
-    private Set<Long> events = Set.of();
+    private List<Long> events = new ArrayList<>();
 }

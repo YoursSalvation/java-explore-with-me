@@ -6,14 +6,19 @@ import main.dto.NewCompilationDto;
 import main.server.exception.NotFoundException;
 import main.server.mapper.CompilationMapper;
 import main.server.model.Compilation;
+import main.server.model.Event;
 import main.server.repository.CompilationRepository;
+import main.server.repository.EventRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,13 +26,22 @@ import java.util.List;
 public class CompilationServiceImpl implements CompilationService {
 
     private final CompilationRepository repository;
+    private final EventRepository eventRepository;
 
     @Override
     public CompilationDto create(NewCompilationDto dto) {
         Compilation compilation = Compilation.builder()
                 .title(dto.getTitle())
-                .pinned(dto.getPinned() != null ? dto.getPinned() : false)
+                .pinned(dto.getPinned())
+                .events(new HashSet<>())
                 .build();
+
+        if (dto.getEvents() != null && !dto.getEvents().isEmpty()) {
+            Set<Event> events = eventRepository.findAllById(dto.getEvents())
+                    .stream()
+                    .collect(Collectors.toSet());
+            compilation.setEvents(events);
+        }
 
         return CompilationMapper.toDto(repository.save(compilation));
     }
