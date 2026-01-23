@@ -286,6 +286,12 @@ public class EventServiceImpl implements EventService {
             HttpServletRequest request
     ) {
 
+        statsClient.hit(
+                "ewm-main-service",
+                "/events",
+                getClientIp(request)
+        );
+
         if (text != null && !text.isBlank()) {
             text = "%" + text + "%";
         } else {
