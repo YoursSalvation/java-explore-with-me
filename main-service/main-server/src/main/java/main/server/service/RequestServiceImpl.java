@@ -1,15 +1,12 @@
 package main.server.service;
 
 import lombok.RequiredArgsConstructor;
-import main.dto.EventRequestStatusUpdateRequest;
-import main.dto.EventState;
-import main.dto.ParticipationRequestDto;
+import main.dto.*;
 import main.server.exception.ConflictException;
 import main.server.exception.NotFoundException;
 import main.server.mapper.RequestMapper;
 import main.server.model.Event;
 import main.server.model.Request;
-import main.dto.RequestStatus;
 import main.server.model.User;
 import main.server.repository.EventRepository;
 import main.server.repository.RequestRepository;
@@ -19,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -83,7 +81,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     @Transactional
-    public List<ParticipationRequestDto> updateRequestsStatus(
+    public EventRequestStatusUpdateResult updateRequestsStatus(
             Long userId,
             Long eventId,
             EventRequestStatusUpdateRequest dto
@@ -101,6 +99,9 @@ public class RequestServiceImpl implements RequestService {
             throw new NotFoundException("Requests not found");
         }
 
+        List<Request> confirmed = new ArrayList<>();
+        List<Request> rejected = new ArrayList<>();
+
         if (dto.getStatus() == RequestStatus.CONFIRMED) {
 
             for (Request r : requests) {
@@ -111,20 +112,21 @@ public class RequestServiceImpl implements RequestService {
                 }
             }
 
-            long confirmed = requestRepository
+            long alreadyConfirmed = requestRepository
                     .countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
 
             if (event.getParticipantLimit() > 0 &&
-                    confirmed + requests.size() > event.getParticipantLimit()) {
+                    alreadyConfirmed + requests.size() > event.getParticipantLimit()) {
                 throw new ConflictException("Participant limit reached");
             }
 
             for (Request r : requests) {
                 r.setStatus(RequestStatus.CONFIRMED);
+                confirmed.add(r);
             }
 
             event.setConfirmedRequests(
-                    event.getConfirmedRequests() + requests.size()
+                    event.getConfirmedRequests() + confirmed.size()
             );
 
         } else if (dto.getStatus() == RequestStatus.REJECTED) {
@@ -136,14 +138,16 @@ public class RequestServiceImpl implements RequestService {
                     );
                 }
                 r.setStatus(RequestStatus.REJECTED);
+                rejected.add(r);
             }
         }
 
         requestRepository.saveAll(requests);
 
-        return requests.stream()
-                .map(RequestMapper::toDto)
-                .toList();
+        return new EventRequestStatusUpdateResult(
+                confirmed.stream().map(RequestMapper::toDto).toList(),
+                rejected.stream().map(RequestMapper::toDto).toList()
+        );
     }
 
     @Override

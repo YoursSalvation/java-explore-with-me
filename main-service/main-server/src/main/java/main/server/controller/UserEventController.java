@@ -70,7 +70,7 @@ public class UserEventController {
     }
 
     @PatchMapping("/{eventId}/requests")
-    public List<ParticipationRequestDto> updateStatus(
+    public EventRequestStatusUpdateResult updateStatus(
             @PathVariable Long userId,
             @PathVariable Long eventId,
             @RequestBody EventRequestStatusUpdateRequest dto
