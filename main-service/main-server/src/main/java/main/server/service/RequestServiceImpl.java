@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -65,7 +66,7 @@ public class RequestServiceImpl implements RequestService {
                         : RequestStatus.PENDING;
 
         Request request = Request.builder()
-                .created(LocalDateTime.now())
+                .created(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))
                 .event(event)
                 .requester(user)
                 .status(status)
