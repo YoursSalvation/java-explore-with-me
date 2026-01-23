@@ -144,7 +144,7 @@ public class RequestServiceImpl implements RequestService {
     @Override
     @Transactional(readOnly = true)
     public List<ParticipationRequestDto> getUserRequests(Long userId) {
-        return requestRepository.findAllByRequesterId(userId).stream()
+        return requestRepository.findUserRequests(userId).stream()
                 .map(RequestMapper::toDto)
                 .toList();
     }
