@@ -16,8 +16,23 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query("""
                 select e from Event e
                 where e.state = :state
+                  and (:categories is null or e.category.id in :categories)
+                  and (:paid is null or e.paid = :paid)
+                  and e.eventDate between :start and :end
+            """)
+    Page<Event> findPublicEventsWithoutText(
+            List<Long> categories,
+            Boolean paid,
+            LocalDateTime start,
+            LocalDateTime end,
+            EventState state,
+            Pageable pageable
+    );
+
+    @Query("""
+                select e from Event e
+                where e.state = :state
                   and (
-                       :text is null or
                        lower(e.annotation) like lower(concat('%', :text, '%')) or
                        lower(e.description) like lower(concat('%', :text, '%'))
                   )
@@ -25,7 +40,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
                   and (:paid is null or e.paid = :paid)
                   and e.eventDate between :start and :end
             """)
-    Page<Event> findPublicEvents(
+    Page<Event> findPublicEventsWithText(
             String text,
             List<Long> categories,
             Boolean paid,

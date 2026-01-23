@@ -308,15 +308,28 @@ public class EventServiceImpl implements EventService {
             );
         }
 
-        Page<Event> page = eventRepository.findPublicEvents(
-                text,
-                categories,
-                paid,
-                start,
-                end,
-                EventState.PUBLISHED,
-                pageable
-        );
+        Page<Event> page;
+
+        if (text == null) {
+            page = eventRepository.findPublicEventsWithoutText(
+                    categories,
+                    paid,
+                    start,
+                    end,
+                    EventState.PUBLISHED,
+                    pageable
+            );
+        } else {
+            page = eventRepository.findPublicEventsWithText(
+                    text,
+                    categories,
+                    paid,
+                    start,
+                    end,
+                    EventState.PUBLISHED,
+                    pageable
+            );
+        }
 
         Stream<Event> stream = page.stream();
 
