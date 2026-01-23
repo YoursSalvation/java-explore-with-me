@@ -3,6 +3,7 @@ package main.server.service;
 import lombok.RequiredArgsConstructor;
 import main.dto.CompilationDto;
 import main.dto.NewCompilationDto;
+import main.dto.UpdateCompilationDto;
 import main.server.exception.NotFoundException;
 import main.server.mapper.CompilationMapper;
 import main.server.model.Compilation;
@@ -52,17 +53,28 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
-    public CompilationDto update(Long compId, NewCompilationDto dto) {
+    @Transactional
+    public CompilationDto update(Long compId, UpdateCompilationDto dto) {
+
         Compilation compilation = repository.findById(compId)
                 .orElseThrow(() -> new NotFoundException("Compilation not found"));
 
-        compilation.setTitle(dto.getTitle());
-        compilation.setPinned(
-                dto.getPinned() != null ? dto.getPinned() : compilation.getPinned()
-        );
+        if (dto.getTitle() != null) {
+            compilation.setTitle(dto.getTitle());
+        }
+
+        if (dto.getPinned() != null) {
+            compilation.setPinned(dto.getPinned());
+        }
+
+        if (dto.getEvents() != null) {
+            List<Event> events = eventRepository.findAllById(dto.getEvents());
+            compilation.setEvents(new HashSet<>(events));
+        }
 
         return CompilationMapper.toDto(repository.save(compilation));
     }
+
 
     @Override
     @Transactional(readOnly = true)

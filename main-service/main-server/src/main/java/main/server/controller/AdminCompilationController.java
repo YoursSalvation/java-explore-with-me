@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import main.dto.CompilationDto;
 import main.dto.NewCompilationDto;
+import main.dto.UpdateCompilationDto;
 import main.server.service.CompilationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +29,11 @@ public class AdminCompilationController {
     }
 
     @PatchMapping("/{compId}")
-    public CompilationDto update(@PathVariable Long compId,
-                                 @RequestBody @Valid NewCompilationDto dto) {
+    public CompilationDto update(
+            @PathVariable Long compId,
+            @RequestBody UpdateCompilationDto dto
+    ) {
         return service.update(compId, dto);
     }
+
 }
