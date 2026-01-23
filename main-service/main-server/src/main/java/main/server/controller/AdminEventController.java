@@ -36,22 +36,16 @@ public class AdminEventController {
             @PathVariable Long eventId,
             @RequestBody @Valid UpdateEventAdminRequest dto
     ) {
+        EventFullDto result = eventService.updateAdminEvent(eventId, dto);
+
         if ("PUBLISH_EVENT".equals(dto.getStateAction())) {
-            return eventService.publish(eventId);
+            result = eventService.publish(eventId);
         }
+
         if ("REJECT_EVENT".equals(dto.getStateAction())) {
-            return eventService.reject(eventId);
+            result = eventService.reject(eventId);
         }
-        return eventService.updateAdminEvent(eventId, dto);
-    }
 
-    @PatchMapping("/{eventId}/publish")
-    public EventFullDto publish(@PathVariable Long eventId) {
-        return eventService.publish(eventId);
-    }
-
-    @PatchMapping("/{eventId}/reject")
-    public EventFullDto reject(@PathVariable Long eventId) {
-        return eventService.reject(eventId);
+        return result;
     }
 }
