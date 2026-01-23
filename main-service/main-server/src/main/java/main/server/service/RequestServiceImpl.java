@@ -151,6 +151,22 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<ParticipationRequestDto> getEventRequests(Long userId, Long eventId) {
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Event not found"));
+
+        if (!event.getInitiator().getId().equals(userId)) {
+            throw new ConflictException("Only initiator can view event requests");
+        }
+
+        return requestRepository.findByEventId(eventId).stream()
+                .map(RequestMapper::toDto)
+                .toList();
+    }
+
+    @Override
     public ParticipationRequestDto cancel(Long userId, Long requestId) {
 
         Request request = requestRepository.findById(requestId)

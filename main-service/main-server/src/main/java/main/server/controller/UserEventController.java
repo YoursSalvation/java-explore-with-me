@@ -53,6 +53,14 @@ public class UserEventController {
         return eventService.getUserEventById(userId, eventId);
     }
 
+    @GetMapping("/{eventId}/requests")
+    public List<ParticipationRequestDto> getEventRequests(
+            @PathVariable Long userId,
+            @PathVariable Long eventId
+    ) {
+        return requestService.getEventRequests(userId, eventId);
+    }
+
     @PatchMapping("/{eventId}/cancel")
     public EventFullDto cancel(
             @PathVariable Long userId,
