@@ -105,11 +105,17 @@
           "request": {
             "method": "PATCH",
             "url": {
-              "raw": "http://localhost:8080/admin/events/{{eventId}}/publish",
+              "raw": "http://localhost:8080/admin/events/{{eventId}}?eventState=PUBLISHED",
               "protocol": "http",
               "host": ["localhost"],
               "port": "8080",
-              "path": ["admin", "events", "{{eventId}}", "publish"]
+              "path": ["admin", "events", "{{eventId}}"],
+              "query": [
+                {
+                  "key": "eventState",
+                  "value": "PUBLISHED"
+                }
+              ]
             }
           },
           "event": [
