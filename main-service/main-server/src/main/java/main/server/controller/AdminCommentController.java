@@ -20,8 +20,8 @@ public class AdminCommentController {
         return service.getPendingComments();
     }
 
-    @PatchMapping("/{commentId}/publish")
-    public CommentDto publish(@PathVariable Long commentId) {
+    @PatchMapping("/{commentId}/approve")
+    public CommentDto approve(@PathVariable Long commentId) {
         return service.publish(commentId);
     }
 
