@@ -101,6 +101,29 @@
           ]
         },
         {
+          "name": "Publish event",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "http://localhost:8080/admin/events/{{eventId}}/publish",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["admin", "events", "{{eventId}}", "publish"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "name": "Create comment",
           "request": {
             "method": "POST",
