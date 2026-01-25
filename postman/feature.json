@@ -85,7 +85,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Event with comments\",\n  \"annotation\": \"Test\",\n  \"description\": \"Test\",\n  \"category\": {{categoryId}},\n  \"eventDate\": \"2030-01-01 12:00:00\",\n  \"paid\": false,\n  \"participantLimit\": 10,\n  \"requestModeration\": true,\n  \"location\": { \"lat\": 10.0, \"lon\": 10.0 }\n}"
+              "raw": "{\n  \"title\": \"Event with comments\",\n  \"annotation\": \"This is a valid annotation for testing comments\",\n  \"description\": \"This is a valid description with more than twenty characters\",\n  \"category\": \"{{categoryId}}\",\n  \"eventDate\": \"2030-01-01 12:00:00\",\n  \"paid\": false,\n  \"participantLimit\": 10,\n  \"requestModeration\": true,\n  \"location\": { \"lat\": 10.0, \"lon\": 10.0 }\n}\n"
             }
           },
           "event": [
@@ -93,8 +93,8 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('201 Created', () => pm.response.to.have.status(201));",
-                  "pm.environment.set('eventId', pm.response.json().id);"
+                  "pm.test(\"201 Created\", () => {\n    pm.response.to.have.status(201);\n});\n\npm.environment.set(\"commentId\", pm.response.json().id);\n",
+                  "pm.environment.set(\"eventId\", pm.response.json().id);"
                 ]
               }
             }
@@ -114,7 +114,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{ \"text\": \"First comment\" }"
+              "raw": "{\n  \"text\": \"This is the first comment with valid length\"\n}\n"
             }
           },
           "event": [
@@ -122,8 +122,8 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('201 Created', () => pm.response.to.have.status(201));",
-                  "pm.environment.set('commentId', pm.response.json().id);"
+                  "pm.test(\"201 Created\", () => {\n    pm.response.to.have.status(201);\n});",
+                  "pm.environment.set(commentId, pm.response.json().id);"
                 ]
               }
             }
