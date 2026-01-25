@@ -146,7 +146,7 @@
               "script": {
                 "exec": [
                   "pm.test(\"201 Created\", () => {\n    pm.response.to.have.status(201);\n});",
-                  "pm.environment.set(commentId, pm.response.json().id);"
+                  "pm.environment.set(\"commentId\", pm.response.json().id);"
                 ]
               }
             }
