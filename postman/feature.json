@@ -104,18 +104,19 @@
           "name": "Publish event",
           "request": {
             "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
             "url": {
-              "raw": "http://localhost:8080/admin/events/{{eventId}}?stateAction=PUBLISH_EVENT",
+              "raw": "http://localhost:8080/admin/events/{{eventId}}",
               "protocol": "http",
               "host": ["localhost"],
               "port": "8080",
-              "path": ["admin", "events", "{{eventId}}"],
-              "query": [
-                {
-                  "key": "stateAction",
-                  "value": "PUBLISH_EVENT"
-                }
-              ]
+              "path": ["admin", "events", "{{eventId}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"stateAction\": \"PUBLISH_EVENT\"\n}"
             }
           },
           "event": [
