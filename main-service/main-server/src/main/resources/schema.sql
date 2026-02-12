@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS comments;
 DROP TABLE IF EXISTS compilation_events;
 DROP TABLE IF EXISTS requests;
 DROP TABLE IF EXISTS events;
@@ -61,4 +62,21 @@ CREATE TABLE compilation_events (
     PRIMARY KEY (compilation_id, event_id),
     CONSTRAINT fk_comp_event_comp FOREIGN KEY (compilation_id) REFERENCES compilations(id),
     CONSTRAINT fk_comp_event_event FOREIGN KEY (event_id) REFERENCES events(id)
+);
+
+CREATE TABLE comments (
+    id BIGSERIAL PRIMARY KEY,
+    text TEXT NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    created TIMESTAMP NOT NULL,
+    updated TIMESTAMP,
+
+    author_id BIGINT NOT NULL,
+    event_id BIGINT NOT NULL,
+
+    CONSTRAINT fk_comment_author
+        FOREIGN KEY (author_id) REFERENCES users(id),
+
+    CONSTRAINT fk_comment_event
+        FOREIGN KEY (event_id) REFERENCES events(id)
 );
